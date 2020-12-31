@@ -1,0 +1,9 @@
+*.pyc
+media/
+settings_local.py
+venv/
+*.sqlite3
+.DS_Store
+.env
+*.pyo
+.vscode

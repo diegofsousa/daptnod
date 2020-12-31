@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+# Thirty libs
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +28,10 @@ SECRET_KEY = 'pnco_dqz+wf=l-h(k3+oli=5=10g8p)=1i$66j$i&b)dir4w!s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+if config('DEBUG') == '0':
+    DEBUG = False
+
+ALLOWED_HOSTS = [config('HOST_ALLOWED0'), config('HOST_ALLOWED1'), config('HOST_ALLOWED2')]
 
 
 # Application definition
@@ -81,6 +87,18 @@ DATABASES = {
 }
 
 
+""" DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME_PRODUCTION'),
+        'USER': config('DB_USER_PRODUCTION'),
+        'PASSWORD': config('DB_PASSWORD_PRODUCTION'),
+        'HOST': config('DB_HOST_PRODUCTION'),
+        'PORT': config('DB_PORT_PRODUCTION'),
+    }
+} """
+
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -103,9 +121,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Fortaleza'
 
 USE_I18N = True
 

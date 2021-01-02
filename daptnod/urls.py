@@ -19,4 +19,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('daptnod.notes.urls', namespace='notes')),
+    path('accounts/', include('daptnod.accounts.urls', namespace='accounts')),
 ]

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+<section class="hero">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <div class="columns is-8 is-variable ">
+        <div class="column is-half is-offset-one-quarter">
+          <h1 class="title is-4">Sign up</h1>
+          <form action="{% url 'accounts:signup' %}" method="post">{% csrf_token %}
+            {% for field in form %}
+            {% if field.errors %}
+            <div class="field">
+              <p class="control has-icons-left has-icons-right">
+                {% if field.name == 'username' %}
+                <input type="text" name="{{ field.name }}" maxlength="150" autofocus class="input is-danger" required id="id_{{ field.name }}" placeholder="{{ field.label }}">
+                <span class="icon is-small is-left">
+                  <i class="fa fa-user"></i>
+                </span>
+                {% elif field.name == 'email' %}
+
+                <input type="email" name="{{ field.name }}" maxlength="254" autofocus class="input is-danger" required id="id_{{ field.name }}" placeholder="{{ field.label }}">
+                <span class="icon is-small is-left">
+                  <i class="fa fa-envelope"></i>
+                </span>
+
+                {% elif field.name == 'password1' %}
+
+                <input type="password" name="{{ field.name }}" autocomplete="new-password" class="input is-danger" required id="id_{{ field.name }}" placeholder="{{ field.label }}">
+                <span class="icon is-small is-left">
+                  <i class="fa fa-lock"></i>
+                </span>
+
+                {% elif field.name == 'password2' %}
+
+                <input type="password" name="{{ field.name }}" autocomplete="new-password" class="input is-danger" required id="id_{{ field.name }}" placeholder="{{ field.label }}">
+                <span class="icon is-small is-left">
+                  <i class="fa fa-lock"></i>
+                </span>
+
+                {% endif %}
+              <span class="icon is-small is-right">
+                <i class="fa fa-exclamation-triangle"></i>
+              </span>
+              {% for error in field.errors %}
+              <span class="help is-danger">{{ error }}</span>
+              {% endfor%}
+              </p>
+            </div>
+            {%else%}
+
+              <div class="field">
+                <p class="control has-icons-left">
+                
+                {% if field.name == 'username' %}
+                <input type="text" name="{{ field.name }}" maxlength="150" autofocus class="input" required id="id_{{ field.name }}" placeholder="{{ field.label }}">
+                <span class="icon is-small is-left">
+                  <i class="fa fa-user"></i>
+                </span>
+                {% elif field.name == 'email' %}
+
+                <input type="email" name="{{ field.name }}" maxlength="254" autofocus class="input" required id="id_{{ field.name }}" placeholder="{{ field.label }}">
+                <span class="icon is-small is-left">
+                  <i class="fa fa-envelope"></i>
+                </span>
+
+                {% elif field.name == 'password1' %}
+
+                <input type="password" name="{{ field.name }}" autocomplete="new-password" class="input" required id="id_{{ field.name }}" placeholder="{{ field.label }}">
+                <span class="icon is-small is-left">
+                  <i class="fa fa-lock"></i>
+                </span>
+
+                {% elif field.name == 'password2' %}
+
+                <input type="password" name="{{ field.name }}" autocomplete="new-password" class="input" required id="id_{{ field.name }}" placeholder="{{ field.label }}">
+                <span class="icon is-small is-left">
+                  <i class="fa fa-lock"></i>
+                </span>
+
+                {% endif %}
+                </p>
+              </div>
+            {%endif%}
+            {% endfor %}
+            <div class="control">
+              <button type="submit" class="button is-primary">Sign Up</button>
+            </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- <section class="hero is-fullheight">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <div class="columns is-8 is-variable ">
+        <div class="column is-full">
+          <h1 class="title is-1">DAPTNOD</h1>
+          <button class="button is-large is-fullwidth is-primary">Create a quick note!</button>
+          <p class="is-size-4">Create quick notes without login. Share with your friends. Create an account and save your notes.</p>
+          <div class="social-media">
+            <a href="https://facebook.com" target="_blank" class="button is-light is-large"><i class="fa fa-facebook-square" aria-hidden="true"></i></a>
+            <a href="https://instagram.com" target="_blank" class="button is-light is-large"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+            <a href="https://twitter.com" target="_blank" class="button is-light is-large"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+{% endblock %}

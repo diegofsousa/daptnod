@@ -17,5 +17,7 @@ class Note(models.Model):
 	is_locked = models.BooleanField(verbose_name="Is locked", null=False, blank=False, default=False)
 
 	def __str__(self):
-		return self.content[0:10]
+		if self.content != "": return self.content[0:10]
+		else: return "<empty content>"
+
 

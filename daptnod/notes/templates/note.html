@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Daptnod</title>
+	<link rel="shortcut icon" href="../images/fav_icon.png" type="image/x-icon">
+	<!-- Bulma Version 0.9.0-->
+	<!-- <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+		integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"> -->
+</head>
+
+<body>
+  
+  <div align="center" class="main">
+    <textarea id="text">{{ data.content }}</textarea>
+  </div>
+  
+</body>
+
+</div>
+</html>
+
+<style>
+html {
+  height: 100%;
+}
+
+body {
+  display: block;
+  margin: 0px;
+  padding: 0px;
+  overflow: hidden;
+  height: 100%;
+}
+
+.main {
+  width: 100%;
+  height: 100%;
+  float: right;
+  margin: 0px;
+}
+
+.main > textarea {
+  margin: auto;
+  font-family: Arial, Helvetica, Tahoma, Verdana;
+  font-size: 16px;
+  width: 100%;
+  height: 100%;
+  color: #111111;
+  padding: 10px;
+  resize: none;
+
+  box-sizing: border-box;
+  
+  border-image: initial;
+}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+<script>
+  setInterval(checkTextUpdate, 2000);
+  var content = $("#text").val();
+
+  function checkTextUpdate() {
+    var newContent = $("#text").val();
+    if (content != newContent){
+      content = newContent;
+      updateContent(content);
+    }
+  }
+
+  function updateContent(content) {
+    $.ajax({
+        url : "",
+        type : "POST",
+        data : {content : content},
+        success : function(json) {
+            
+            if (json != false) {
+                console.log("Resultado do processamento: "+json);
+            } else {
+                console.log("Resultado do processamento: "+json);
+            }            
+        },
+
+        error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": " + xhr.responseText);
+           alert("Erro ao adicionar usuário!");
+           //$('.loadadd').addClass("semfunc");
+
+        }
+    }); 
+    return false;
+}
+
+  document.addEventListener('DOMContentLoaded', () => {
+  (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+    var $notification = $delete.parentNode;
+
+    $delete.addEventListener('click', () => {
+      $notification.parentNode.removeChild($notification);
+    });
+  });
+});
+
+function getCookie(name) {
+    var cookieValue = null;
+    var i = 0;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (i; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    crossDomain: false, // obviates need for sameOrigin test
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+</script>

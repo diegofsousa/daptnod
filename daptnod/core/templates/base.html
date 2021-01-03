@@ -18,7 +18,7 @@
 	<nav class="navbar">
 		<div class="container">
 			<div class="navbar-brand">
-        <a class="navbar-item" href="../">
+        <a class="navbar-item" href="/">
           Daptnod
 				</a>
 				<span class="navbar-burger burger" data-target="navbarMenu">
@@ -33,7 +33,7 @@
 					<div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">{{ request.user.username }}</a>
             <div class="navbar-dropdown">
-              <a class="navbar-item">Settings</a>
+              <a href="{% url 'accounts:settings' %}" class="navbar-item">Settings</a>
               <hr class="navbar-divider">
               <a href="{% url 'accounts:logout' %}" class="navbar-item">Logout</a>
             </div>
@@ -44,7 +44,7 @@
 			<div id="navbarMenu" class="navbar-menu">
 				<div class="navbar-end">
           <div class="navbar-item">
-            <a class="button is-primary">
+            <a href="{% url 'accounts:signup' %}" class="button is-primary">
               <strong>Sign up</strong>
             </a>
           </div>
@@ -97,6 +97,14 @@
 		</div>
 	</nav>
   <!-- END NAV -->
+
+  {% for message in messages %}
+  <div class="notification is-{{ message.tags }} has-text-centered">
+    <button class="delete"></button>
+    {{ message }}
+  </div>
+  {% endfor %}
+
   {% block content %}{% endblock %}
 </body>
 
@@ -107,3 +115,15 @@
     min-width:200px;
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+    var $notification = $delete.parentNode;
+
+    $delete.addEventListener('click', () => {
+      $notification.parentNode.removeChild($notification);
+    });
+  });
+});
+</script>

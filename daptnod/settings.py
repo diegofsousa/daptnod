@@ -45,7 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'daptnod.notes',
     'daptnod.core',
-    'daptnod.accounts'
+    'daptnod.accounts',
+
+    # Thirty apps
+    'widget_tweaks'
 ]
 
 MIDDLEWARE = [
@@ -134,8 +137,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-LOGIN_URL = 'accounts:login'
+LOGIN_URL = 'notes:index'
 LOGIN_REDIRECT_URL = 'core:index'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'daptnod.accounts.backends.ModelBackend'
+)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

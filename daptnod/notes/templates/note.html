@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,19 +6,79 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Daptnod</title>
+	<title>{% if data.is_private %}&#128274; {% else %}{% endif %} {{ data.content|truncatechars:20 }} - Daptnod</title>
 	<link rel="shortcut icon" href="../images/fav_icon.png" type="image/x-icon">
 	<!-- Bulma Version 0.9.0-->
-	<!-- <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-tooltip@3.0.2/dist/css/bulma-tooltip.min.css" />
 	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-		integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"> -->
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/toaster/toaster-box.css' %}" />
 </head>
 
 <body>
   
   <div align="center" class="main">
-    <textarea id="text">{{ data.content }}</textarea>
+    {% if data.is_locked %}
+      <textarea disabled="true" id="text">{{ data.content }}</textarea>
+    {% else %}
+      <textarea id="text">{{ data.content }}</textarea>
+    {% endif %}
   </div>
+
+  {% if show_menus %}
+  <div class="buttons fixed-dropdown has-addons">
+    <button data-target="modal-lock" aria-haspopup="true" class="button modal-button has-tooltip-bottom {% if data.is_locked %}is-black{% else %}is-dark{% endif %}" data-tooltip="{% if data.is_locked %}Unlock text for editing{% else %}Block text editing{% endif %}">
+      <span class="icon is-small">
+        <i class="fa fa-ban" aria-hidden="true"></i>
+      </span>
+    </button>
+    <button data-target="modal-private" aria-haspopup="true" class="button modal-button has-tooltip-bottom {% if data.is_private %}is-black{% else %}is-dark{% endif %}" data-tooltip="{% if data.is_private %}Make public{% else %}Make private{% endif %}">
+      <span class="icon is-small">
+        <i class="fa fa-lock" aria-hidden="true"></i>
+      </span>
+    </button>
+    <button class="button is-dark has-tooltip-bottom" data-tooltip="Other settings">
+      <span class="icon is-small">
+        <i class="fa fa-cog" aria-hidden="true"></i>
+      </span>
+    </button>
+  </div>
+
+  <div id="modal-lock" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">{% if data.is_locked %}Unlock text for editing{% else %}Block text editing{% endif %}</p>
+        <button class="delete" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        Upon completion of this action, you will modify the protection for changes in this document. Do you want to continue?
+      </section>
+      <footer class="modal-card-foot">
+        <a href="{% url 'notes:note_lock' data.id.hashid %}" class="button is-success">Save changes</a>
+        <button class="button">Cancel</button>
+      </footer>
+    </div>
+  </div>
+  
+  <div id="modal-private" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">{% if data.is_private %}Make public{% else %}Make private{% endif %}</p>
+        <button class="delete" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        Upon completing this action, you will change the privacy settings for this content. If you deprive, only you will have access, otherwise anyone with the link will be able to view it. Do you want to continue?
+      </section>
+      <footer class="modal-card-foot">
+        <a href="{% url 'notes:note_private' data.id.hashid %}" class="button is-success">Save changes</a>
+        <button class="button">Cancel</button>
+      </footer>
+    </div>
+  </div>
+  {% endif %}  
   
 </body>
 
@@ -25,42 +86,50 @@
 </html>
 
 <style>
-html {
-  height: 100%;
-}
+  html {
+    height: 100%;
+  }
 
-body {
-  display: block;
-  margin: 0px;
-  padding: 0px;
-  overflow: hidden;
-  height: 100%;
-}
+  .fixed-dropdown {
+    position:fixed;
+    top: 30px;
+    right:40px;
+  }
 
-.main {
-  width: 100%;
-  height: 100%;
-  float: right;
-  margin: 0px;
-}
+  body {
+    display: block;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    height: 100%;
+  }
 
-.main > textarea {
-  margin: auto;
-  font-family: Arial, Helvetica, Tahoma, Verdana;
-  font-size: 16px;
-  width: 100%;
-  height: 100%;
-  color: #111111;
-  padding: 10px;
-  resize: none;
+  .main {
+    width: 100%;
+    height: 100%;
+    float: right;
+    margin: 0px;
+  }
 
-  box-sizing: border-box;
-  
-  border-image: initial;
-}
+  .main > textarea {
+    margin: auto;
+    font-family: Arial, Helvetica, Tahoma, Verdana;
+    font-size: 16px;
+    width: 100%;
+    height: 100%;
+    color: #111111;
+    padding: 10px;
+    resize: none;
+
+    box-sizing: border-box;
+    
+    border-image: initial;
+  }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="{% static 'css/toaster/toaster-box.js' %}"></script>
+<script src="{% static 'js/bulma.js' %}"></script>
 
 <script>
   setInterval(checkTextUpdate, 2000);
@@ -79,63 +148,83 @@ body {
         url : "",
         type : "POST",
         data : {content : content},
-        success : function(json) {
-            
-            if (json != false) {
-                console.log("Resultado do processamento: "+json);
-            } else {
-                console.log("Resultado do processamento: "+json);
+        success : function(json) {              
+            if (json == false) {
+              toast_notify("You cannot edit this note because the creator of this content has protected this document from being written.", 5000, "#e6b800");
             }            
         },
 
         error : function(xhr,errmsg,err) {
             console.log(xhr.status + ": " + xhr.responseText);
-           alert("Erro ao adicionar usuário!");
-           //$('.loadadd').addClass("semfunc");
-
+            toast_notify("&#10060; Oops! Update was not saved because an error occurred with our servers. Try again later...", 10000, "#ff3860");
         }
     }); 
     return false;
-}
+  }
+
+  function toast_notify(message, duration, color){
+    new ToasterBox({
+        msg: message,
+        html: true,
+        time: duration,
+        className: null,
+        closeButton: true,
+        maxWidth: 450,
+        autoOpen: true,
+        position: 'top-center',
+        backgroundColor: color,
+        closeIcon: null
+      })
+  }
+
+  {% for message in messages %}
+    toast_notify("{{ message }}", 5000, 	"#48c774");
+  {% endfor %}
+
+  $('.fixed-dropdown').fadeTo(0 ,0.5).hover(function() {
+      $(this).fadeTo(350, 1);
+  }, function() {
+      $(this).fadeTo(350, '0.5');
+  });
 
   document.addEventListener('DOMContentLoaded', () => {
-  (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-    var $notification = $delete.parentNode;
+    (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+      var $notification = $delete.parentNode;
 
-    $delete.addEventListener('click', () => {
-      $notification.parentNode.removeChild($notification);
+      $delete.addEventListener('click', () => {
+        $notification.parentNode.removeChild($notification);
+      });
     });
   });
-});
 
 function getCookie(name) {
-    var cookieValue = null;
-    var i = 0;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (i; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
+  var cookieValue = null;
+  var i = 0;
+  if (document.cookie && document.cookie !== '') {
+      var cookies = document.cookie.split(';');
+      for (i; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
     }
     return cookieValue;
-}
-var csrftoken = getCookie('csrftoken');
+  }
+  var csrftoken = getCookie('csrftoken');
 
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-$.ajaxSetup({
-    crossDomain: false, // obviates need for sameOrigin test
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});
+  function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+  $.ajaxSetup({
+      crossDomain: false, // obviates need for sameOrigin test
+      beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type)) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+      }
+  });
 </script>

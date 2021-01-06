@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-8 is-variable ">
+        <div class="column is-full">
+          <h1 class="title has-text-centered is-1">DAPTNOD</h1>
+          <a href="{% url 'notes:new' %}" class="button is-large is-fullwidth is-primary">Create a quick note!</a>
+          <hr>
+          <div class="columns">
+            <div class="column is-6 option-1">
+              <p class="subtitle is-5">Recent changes</p>
+              <ul>
+                {% for note in recent_changes %}
+                <li><a href="{% url 'notes:note' note.id.hashid %}">{{ note.title }}</a> <span class="has-text-grey"> - <span class="icon is-small is-left">
+                  <i class="fa fa-clock-o"></i>
+                </span> Updated at {{ note.updated_at }} by {% if note.updated_by == None %}anonymos user{% else %}<strong class="has-text-grey">{{ note.updated_by }}</strong>{% endif %}</span></li>
+                {% endfor %}
+              </ul>
+              <p class="has-text-right flex-footer"><a class="button is-info is-small">See more</a></p>
+            </div>
+            <div class="column is-6 option-2">
+              <p class="subtitle is-5">My notes</p>
+              <ul>
+                {% for note in my_notes %}
+                <li><a href="{% url 'notes:note' note.id.hashid %}">{{ note.title }}</a> <span class="has-text-grey"> - <span class="icon is-small is-left">
+                  <i class="fa fa-clock-o"></i>
+                </span> Updated at {{ note.updated_at }} by {% if note.updated_by == None %}anonymos user{% else %}<strong class="has-text-grey">{{ note.updated_by }}</strong>{% endif %}</span></li>
+                {% endfor %}
+              </ul> 
+              <p class="has-text-right flex-footer"><a class="button is-info is-small">See more</a></p>
+            </div>
+          </div>
+        </div>      
+      </div>
+    </div>
+  </div>
+  
+</section>
+
+<style>
+  .option-1, .option-2 {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flex-footer {
+    margin-top: auto;
+  }
+</style>
+
+{% endblock %}

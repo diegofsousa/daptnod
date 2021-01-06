@@ -8,9 +8,19 @@ import json
 def index(request):
 	login_error = request.session.get('login_error', None)
 	request.session['login_error'] = None
-	return render(request, 'index.html', {
-		'login_error':login_error
-	})
+	if request.user.is_authenticated:
+		my_notes = Note.objects.filter(created_by__pk=request.user.pk)[:10]
+		recent_changes = Note.objects.filter(viewers__pk=request.user.pk)[:10]
+
+		return render(request, 'index_authenticated.html', {
+			'login_error': login_error,
+			'my_notes': my_notes,
+			'recent_changes': recent_changes
+		})
+	else:
+		return render(request, 'index.html', {
+			'login_error':login_error
+		})
 
 def create_note(request):
 	# 1° caso é quando ele é anonimo
@@ -51,7 +61,7 @@ def note(request, hashid):
 			handler_update_note_by_authenticated_user(request, note)
 			return HttpResponse(json.dumps(True), content_type="application/json")
 
-		if Note.objects.filter(viewers__pk=request.user.pk).exists() == False:
+		if Note.objects.filter(pk=note.pk, viewers__pk=request.user.pk).exists() == False:
 			note.viewers.add(request.user)
 
 		Note.objects.filter(pk=note.pk).update(views_number=note.views_number + 1)

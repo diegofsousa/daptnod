@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>{% if data.is_private %}&#128274; {% else %}{% endif %} {{ data.content|truncatechars:20 }} - Daptnod</title>
+	<title>{% if data.is_private %}&#128274; {% else %}{% endif %} {% if data.has_content %}{{ data.content|truncatechars:20 }}{% else %}[empty content]{% endif %} - Daptnod</title>
 	<link rel="shortcut icon" href="../images/fav_icon.png" type="image/x-icon">
 	<!-- Bulma Version 0.9.0-->
   <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />

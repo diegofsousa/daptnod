@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-8 is-variable ">
+        <div class="column is-full">
+          {% block form_title %}
+          {% endblock %}
+          
+            <div class="field is-grouped">
+              <p class="control is-expanded">
+                <input class="input" id="search_box" name="search_box" placeholder="Some text fragment here...">
+              </p>
+              <p class="control">
+                <button type="submit" class="button is-info">
+                  Search
+                </button>
+              </p>
+            </div>
+          </form>
+          <br>
+          {% for note in notes %}
+          <div class="box">
+            <div class="level">
+              <div class="level-left">
+                <h4 id="const" class="title is-5"> <a target="_blank" href="{% url 'notes:note' note.pk.hashid %}">{% if note.has_content %}{{ note.content|truncatechars:70 }}{% else %}<i>[empty content]</i>{% endif %}</a></h4>
+              </div>
+              <div class="level-right">
+                <div class="has-text-grey">
+                  {% if note.is_private %}
+                  <span class="icon is-small is-left">
+                    <i class="fa fa-ban"></i>
+                  </span> - 
+                  {% endif %}
+
+                  {% if note.is_locked %}
+                  <span class="icon is-small is-left">
+                    <i class="fa fa-lock"></i>
+                  </span> - 
+                  {% endif %}
+                  <span class="icon is-small is-left">
+                    <i class="fa fa-eye"></i>
+                  </span>
+                    {{ note.views_number }} - 
+                  <span class="icon is-small is-left">
+                    <i class="fa fa-clock-o"></i>
+                  </span> 
+                  Updated <a data-target="modal-{{ note.pk }}" aria-haspopup="true" class="modal-button is-ghost" >{{ note.updated_at|timesince }}</a> ago by {% if note.updated_by == None %}anonymos user{% else %}<strong class="has-text-grey">{{ note.updated_by }}</strong>{% endif %}
+                  
+                  </div>
+              </div>
+            </div>
+            <article class="message is-primary">
+              <div class="message-body">
+                {% if note.has_content %}
+                <textarea disabled="true" name="" id="" cols="30" rows="10">{{ note.content|truncatechars:700 }}</textarea>
+                {% else %}<i>[empty content]</i>{% endif %}
+              </div>
+            </article>
+            <div id="modal-{{ note.pk }}" class="modal">
+              <div class="modal-background"></div>
+              <div class="modal-card">
+                <header class="modal-card-head">
+                  <p class="modal-card-title">{% if note.has_content %}{{ note.content|truncatechars:40 }}{% else %}<i>[empty content]</i>{% endif %}</p>
+                  <button class="delete" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                  <div class="content">
+                  <h4>Infos:</h4>
+                  <p>
+                    <ul>
+                      <li>Created at <strong>{{ note.created_at }}</strong> by <strong>{% if note.created_by == None %}anonymos user{% else %}{{ note.created_by }}{% endif %}</strong>.</li>
+                      <li>Updated at <strong>{{ note.updated_at }}</strong> by <strong>{% if note.updated_by == None %}anonymos user{% else %}{{ note.updated_by }}{% endif %}</strong>.</li>
+                      <li>{% if note.views_number == 0 %}Document has no views yet{% else %}Document has <strong>{{ note.views_number }} views</strong>{% endif %}.</li>
+                      {% if note.viewers.get_queryset.count > 0 %}
+                      <li>People who viewed this document:</li>
+                      <ul>
+                        {% for people in note.viewers.get_queryset %}
+                          <li><strong>{{ people }}</strong></li>
+                        {% endfor %}
+                      </ul>
+                      {% endif %}
+                      <li>{% if note.is_private %}This document is <strong>private</strong> only to you{% else %}This document is <strong>public</strong> to people with an account or without{% endif %}</li>
+                      <li>{% if note.is_locked %}Document <strong>locked</strong> for writing{% else %}Document <strong>open</strong> for writing{% endif %}</li>
+                    </ul>
+                  </p>
+                </div>
+                </section>
+                <footer class="modal-card-foot">
+                  <button class="button">Cancel</button>
+                </footer>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div>
+            <h3 class="title is-5 has-text-centered">No results found.</h3>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="pagination  is-centered" role="navigation" aria-label="pagination">
+  <ul class="pagination-list">
+    {% if page_obj.has_other_pages %}
+        {# Previous page link #}
+				{% if page_obj.has_previous %}
+				<li>
+					<a class="pagination-link" aria-label="&laquo;" href="?page={{ page_obj.previous_page_number }}{{ getvars }}">&laquo;</a>
+				</li>
+				{% else %}
+				<li class="disabled">
+					<a class="pagination-link" aria-label="&laquo;" href="#">&laquo;</a>
+				</li>
+        {% endif %}
+
+        {# First page #}
+				{% if show_first %}
+				<li>
+					<a class="pagination-link" aria-label="Primeiro" href="?page=1">Primeiro</a>
+				</li>
+        {% endif %}
+        
+        {# List of pages (with current "active") #}
+				{% for page in page_numbers %}
+				{% ifequal page page_obj.number %}
+				<li class="active">
+					<a class="pagination-link is-current" aria-label="{{ page }}" href="#">{{ page }}</a>
+				</li>
+				{% else %}
+				<li>
+					<a class="pagination-link" aria-label="{{ page }}" href="?page={{ page }}{{ getvars }}">{{ page }}</a>
+				</li>
+				{% endifequal %}
+        {% endfor %}
+        
+        {# Last page #}
+				{% if show_last %}
+				<li>
+					<a class="pagination-link" aria-label="{{ page_obj.pages }}Último" href="?page=last">{{ page_obj.pages }}Último</a>
+				</li>
+        {% endif %}
+        
+        {# Next page link #}
+				{% if page_obj.has_next %}
+				<li>
+					<a class="pagination-link" aria-label="&raquo;" href="?page={{ page_obj.next_page_number }}{{ getvars }}">&raquo;</a>
+				</li>
+				{% else %}
+				<li class="disabled">
+					<a class="pagination-link" aria-label="&raquo;" href="#">&raquo;</a>
+				</li>
+				{% endif %}
+    {% endif %}
+  </ul>
+</nav>
+
+<script src="{% static 'js/bulma.js' %}"></script>
+<style>
+   textarea {
+    margin: auto;
+    font-family: Arial, Helvetica, Tahoma, Verdana;
+    font-size: 16px;
+    width: 100%;
+    height: 100%;
+    color: #111111;
+    padding: 10px;
+    resize: none;
+
+    box-sizing: border-box;
+    
+    border-image: initial;
+    border-style: none; 
+    border-color: Transparent; 
+    overflow: auto;
+    background: rgba(0,0,0,0.0);
+  }
+</style>
+{% endblock %}

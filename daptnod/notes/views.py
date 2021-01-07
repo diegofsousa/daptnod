@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
+from django.views.generic import ListView
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.db.models import Q
 from .models import Note
 from django.utils import timezone
 import json
@@ -64,7 +66,8 @@ def note(request, hashid):
 		if Note.objects.filter(pk=note.pk, viewers__pk=request.user.pk).exists() == False:
 			note.viewers.add(request.user)
 
-		Note.objects.filter(pk=note.pk).update(views_number=note.views_number + 1)
+		if request.user.pk != note.created_by_id or note.views_number == 0:
+			Note.objects.filter(pk=note.pk).update(views_number=note.views_number + 1)
 
 		return render(request, 'note.html', {
 			'data':note,
@@ -104,3 +107,73 @@ def private_or_public_note(request, hashid):
 	Note.objects.filter(pk=note.pk).update(is_private=not note.is_private)
 	messages.success(request, 'Content privacy settings have been successfully made!')
 	return redirect('notes:note', hashid=note.id.hashid)
+
+class MyNotesList(ListView):
+	model = Note
+	http_method_names = ['get']
+	template_name = 'list/my_notes.html'
+	context_object_name = 'notes'
+	paginate_by = 7
+
+	def get_queryset(self):
+		self.queryset = super().get_queryset().filter(created_by__pk=self.request.user.pk)
+		if self.request.GET.get('search_box', False):
+			self.queryset=self.queryset.filter(Q(content__icontains = self.request.GET['search_box']))
+		return self.queryset
+	
+	def get_context_data(self, **kwargs):
+		_super = super()
+		context = _super.get_context_data(**kwargs)
+		adjacent_pages = 3
+		page_number = context['page_obj'].number
+		num_pages = context['paginator'].num_pages
+		startPage = max(page_number - adjacent_pages, 1)
+		if startPage <= 5:
+			startPage = 1
+		endPage = page_number + adjacent_pages + 1
+		if endPage >= num_pages - 1:
+			endPage = num_pages + 1
+		page_numbers = [n for n in range(startPage, endPage) \
+				if n > 0 and n <= num_pages]
+		context.update({
+			'page_numbers': page_numbers,
+			'show_first': 1 not in page_numbers,
+			'show_last': num_pages not in page_numbers,
+			})
+
+		return context
+
+class RecentChangesList(ListView):
+	model = Note
+	http_method_names = ['get']
+	template_name = 'list/recent_changes.html'
+	context_object_name = 'notes'
+	paginate_by = 7
+
+	def get_queryset(self):
+		self.queryset = super().get_queryset().filter(viewers__pk=self.request.user.pk)
+		if self.request.GET.get('search_box', False):
+			self.queryset=self.queryset.filter(Q(content__icontains = self.request.GET['search_box']))
+		return self.queryset
+	
+	def get_context_data(self, **kwargs):
+		_super = super()
+		context = _super.get_context_data(**kwargs)
+		adjacent_pages = 3
+		page_number = context['page_obj'].number
+		num_pages = context['paginator'].num_pages
+		startPage = max(page_number - adjacent_pages, 1)
+		if startPage <= 5:
+			startPage = 1
+		endPage = page_number + adjacent_pages + 1
+		if endPage >= num_pages - 1:
+			endPage = num_pages + 1
+		page_numbers = [n for n in range(startPage, endPage) \
+				if n > 0 and n <= num_pages]
+		context.update({
+			'page_numbers': page_numbers,
+			'show_first': 1 not in page_numbers,
+			'show_last': num_pages not in page_numbers,
+			})
+
+		return context

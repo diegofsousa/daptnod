@@ -1,0 +1,6 @@
+{% extends "base_list.html" %}
+
+{% block form_title %}
+<form action="{% url 'notes:recent_changes' %}" method="get">
+<h3 class="title is-3">Recent changes</h3>
+{% endblock %}

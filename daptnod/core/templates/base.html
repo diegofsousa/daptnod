@@ -19,7 +19,7 @@
 		<div class="container">
 			<div class="navbar-brand">
         <a class="navbar-item" href="/">
-          Daptnod
+          DAPTNOD
 				</a>
 				<span class="navbar-burger burger" data-target="navbarMenu">
 					<span></span>
@@ -30,6 +30,9 @@
       {% if request.user.is_authenticated %}
       <div id="navbarMenu" class="navbar-menu">
 				<div class="navbar-end">
+          <a href="{% url 'notes:my_notes' %}" class="navbar-item">
+            <strong>My notes</strong>            
+          </a>
 					<div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">{{ request.user.username }}</a>
             <div class="navbar-dropdown">

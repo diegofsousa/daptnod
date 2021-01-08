@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+
 <section class="hero">
   <div class="hero-body">
     <div class="container">
@@ -11,7 +12,7 @@
           
             <div class="field is-grouped">
               <p class="control is-expanded">
-                <input class="input" id="search_box" name="search_box" placeholder="Some text fragment here...">
+                <input class="input" value="{{ request.GET.search_box }}" id="search_box" name="search_box" placeholder="Some text fragment here...">
               </p>
               <p class="control">
                 <button type="submit" class="button is-info">
@@ -21,14 +22,13 @@
             </div>
           </form>
           <br>
+          <h3 class="title is-5">{{ count }} results found.</h3>
           {% for note in notes %}
-          <div class="box">
+          <div id="box-{{ note.pk.hashid }}" class="box">
             <div class="level">
-              <div class="level-left">
+              <div class="">
                 <h4 id="const" class="title is-5"> <a target="_blank" href="{% url 'notes:note' note.pk.hashid %}">{% if note.has_content %}{{ note.content|truncatechars:70 }}{% else %}<i>[empty content]</i>{% endif %}</a></h4>
-              </div>
-              <div class="level-right">
-                <div class="has-text-grey">
+                <p id="const" class="subtitle is-6 has-text-grey">
                   {% if note.is_private %}
                   <span class="icon is-small is-left">
                     <i class="fa fa-ban"></i>
@@ -47,11 +47,55 @@
                   <span class="icon is-small is-left">
                     <i class="fa fa-clock-o"></i>
                   </span> 
-                  Updated <a data-target="modal-{{ note.pk }}" aria-haspopup="true" class="modal-button is-ghost" >{{ note.updated_at|timesince }}</a> ago by {% if note.updated_by == None %}anonymos user{% else %}<strong class="has-text-grey">{{ note.updated_by }}</strong>{% endif %}
-                  
+                  Updated <a data-target="modal-{{ note.pk }}" aria-haspopup="true" class="modal-button is-ghost" >{{ note.updated_at|timesince }}</a> ago by {% if note.updated_by == None %}anonymos user{% else %}<strong class="has-text-grey">{{ note.updated_by }}</strong>{% endif %}  
+                </p>
+              </div>
+              <div class="level-right">
+                {% if request.user.pk == note.created_by.pk %}
+                  <button data-target="modal-delete-{{ note.pk }}" aria-haspopup="true" class="modal-button delete"></button>
+                  <div id="modal-delete-{{ note.pk }}" class="modal">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                      <header class="modal-card-head">
+                        <p class="modal-card-title">{% if note.has_content %}{{ note.content|truncatechars:40 }}{% else %}<i>[empty content]</i>{% endif %}</p>
+                        <button class="delete" aria-label="close"></button>
+                      </header>
+                      <section class="modal-card-body">
+                        <div class="content">
+                        <p>
+                          Upon completion of this action, you will permanently delete this note. Do you wish to continue?
+                        </p>
+                      </div>
+                      </section>
+                      <footer class="modal-card-foot">
+                        <button onclick="deleteNote('{{ note.pk.hashid }}')" class="button is-danger">Delete</button>
+                        <button class="button">Cancel</button>
+                      </footer>
+                    </div>
                   </div>
+                  <div id="modal-sucess-delete-{{ note.pk.hashid }}" class="modal">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                      <header class="modal-card-head">
+                        <p class="modal-card-title">{% if note.has_content %}{{ note.content|truncatechars:40 }}{% else %}<i>[empty content]</i>{% endif %}</p>
+                        <button class="delete" aria-label="close"></button>
+                      </header>
+                      <section class="modal-card-body">
+                        <div class="content">
+                        <p>
+                          Note successfully deleted.
+                        </p>
+                      </div>
+                      </section>
+                      <footer class="modal-card-foot">
+                        <button class="button is-success">Ok</button>
+                      </footer>
+                    </div>
+                  </div>
+                {% endif %}
               </div>
             </div>
+            
             <article class="message is-primary">
               <div class="message-body">
                 {% if note.has_content %}
@@ -82,8 +126,8 @@
                         {% endfor %}
                       </ul>
                       {% endif %}
-                      <li>{% if note.is_private %}This document is <strong>private</strong> only to you{% else %}This document is <strong>public</strong> to people with an account or without{% endif %}</li>
-                      <li>{% if note.is_locked %}Document <strong>locked</strong> for writing{% else %}Document <strong>open</strong> for writing{% endif %}</li>
+                      <li>{% if note.is_private %}This document is <strong>private</strong>{% else %}This document is <strong>public</strong> to people with an account or without{% endif %}.</li>
+                      <li>{% if note.is_locked %}Document <strong>locked</strong> for writing{% else %}Document <strong>open</strong> for writing.{% endif %}</li>
                     </ul>
                   </p>
                 </div>
@@ -95,7 +139,8 @@
             </div>
           </div>
           {% empty %}
-          <div>
+          
+          <div class="pt-6">
             <h3 class="title is-5 has-text-centered">No results found.</h3>
           </div>
           {% endfor %}
@@ -105,7 +150,7 @@
   </div>
 </section>
 
-<nav class="pagination  is-centered" role="navigation" aria-label="pagination">
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
   <ul class="pagination-list">
     {% if page_obj.has_other_pages %}
         {# Previous page link #}
@@ -161,6 +206,8 @@
 </nav>
 
 <script src="{% static 'js/bulma.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="{% static 'css/toaster/toaster-box.js' %}"></script>
 <style>
    textarea {
     margin: auto;
@@ -180,5 +227,93 @@
     overflow: auto;
     background: rgba(0,0,0,0.0);
   }
+
+  .is-vertical-center {
+    display: flex;
+    align-items: center;
+  }
 </style>
+<link rel="stylesheet" href="{% static 'css/toaster/toaster-box.css' %}" />
+<script>
+
+  function deleteNote(hashid) {
+    $.ajax({
+        url : "{% url 'notes:delete' %}",
+        type : "POST",
+        data : {hashid : hashid},
+        success : function(json) {              
+            if (json == false) {
+              toast_notify("Failed to delete note. Try again later.", 5000, 	"#ff3860");
+            } else {
+              $("#box-" + hashid).addClass("is-hidden");
+              toast_notify("Note successfully deleted.", 5000, 	"#48c774");     
+            }
+        },
+
+        error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": " + xhr.responseText);
+            toast_notify("Note successfully deleted.", 5000, 	"#ff3860");
+        }
+    }); 
+    return false;
+  }
+
+  function toast_notify(message, duration, color){
+    new ToasterBox({
+        msg: message,
+        html: true,
+        time: duration,
+        className: null,
+        closeButton: true,
+        maxWidth: 450,
+        autoOpen: true,
+        position: 'bottom-center',
+        backgroundColor: color,
+        closeIcon: null
+      })
+  }
+
+ 
+
+  document.addEventListener('DOMContentLoaded', () => {
+    (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+      var $notification = $delete.parentNode;
+
+      $delete.addEventListener('click', () => {
+        $notification.parentNode.removeChild($notification);
+      });
+    });
+  });
+
+function getCookie(name) {
+  var cookieValue = null;
+  var i = 0;
+  if (document.cookie && document.cookie !== '') {
+      var cookies = document.cookie.split(';');
+      for (i; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+    }
+    return cookieValue;
+  }
+  var csrftoken = getCookie('csrftoken');
+
+  function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+  $.ajaxSetup({
+      crossDomain: false, // obviates need for sameOrigin test
+      beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type)) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+      }
+  });
+</script>
 {% endblock %}

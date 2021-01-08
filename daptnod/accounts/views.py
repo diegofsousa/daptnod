@@ -20,6 +20,7 @@ def login(request):
 		if user is not None:
 			if user.is_active:
 				django_login(request, user)
+				messages.warning(request, 'DAPTNOD is an experimental tool. We do not encourage you to keep important or secret information like logins and passwords.')
 				return redirect('notes:index')
 		request.session['login_error'] = True
 		return redirect('notes:index')

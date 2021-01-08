@@ -6,6 +6,7 @@ from django.db.models import Q
 from .models import Note
 from django.utils import timezone
 import json
+from django.http import Http404
 
 def index(request):
 	login_error = request.session.get('login_error', None)
@@ -139,6 +140,7 @@ class MyNotesList(ListView):
 			'page_numbers': page_numbers,
 			'show_first': 1 not in page_numbers,
 			'show_last': num_pages not in page_numbers,
+			'count': self.get_queryset().count()
 			})
 
 		return context
@@ -174,6 +176,19 @@ class RecentChangesList(ListView):
 			'page_numbers': page_numbers,
 			'show_first': 1 not in page_numbers,
 			'show_last': num_pages not in page_numbers,
+			'count': self.get_queryset().count()
 			})
 
 		return context
+
+def delete_note(request):
+	if request.method == 'POST':
+		hashid = request.POST.get("hashid", None)
+		if hashid == None:
+			raise Http404
+		note = get_object_or_404(Note, id=hashid)
+		if request.user.pk == note.created_by_id:
+			note.delete()
+			return HttpResponse(json.dumps(True), content_type="application/json")
+		raise PermissionDenied
+	raise Http404

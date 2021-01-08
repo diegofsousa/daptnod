@@ -26,6 +26,10 @@ class Note(models.Model):
 	def title(self):
 		if self.content != "": return self.content[0:9] + "..."
 		else: return "<empty content>"
+
+	def title_for_homepage(self):
+		if self.content != "": return self.content[0:130] + "..."
+		else: return "<empty content>"
 	
 	def has_content(self):
 		if self.content != "": return True

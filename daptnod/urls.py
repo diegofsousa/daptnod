@@ -25,3 +25,7 @@ urlpatterns = [
     # debug toolbar
     path('__debug__/', include(debug_toolbar.urls)),
 ]
+
+handler404 = 'daptnod.core.views.handler404'
+handler403 = 'daptnod.core.views.handler403'
+handler500 = 'daptnod.core.views.handler500'

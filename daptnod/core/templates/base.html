@@ -13,7 +13,7 @@
 		integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 </head>
 
-<body>
+<body class="main">
 	<!-- START NAV -->
 	<nav class="navbar">
 		<div class="container">
@@ -21,7 +21,7 @@
         <a class="navbar-item" href="/">
           DAPTNOD
 				</a>
-				<span class="navbar-burger burger" data-target="navbarMenu">
+				<span class="navbar-burger burger" data-target="navbarMenu" aria-label="menu" aria-expanded="false">
 					<span></span>
 					<span></span>
 					<span></span>
@@ -107,8 +107,18 @@
     {{ message }}
   </div>
   {% endfor %}
-
-  {% block content %}{% endblock %}
+  <div class="section">
+    {% block content %}{% endblock %}
+  </div>
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>
+        <strong>DAPTNOD</strong> by <a target="_blank" href="https://diegofernando.dev">Diego Fernando</a>. The source code is licensed
+        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+        is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+      </p>
+    </div>
+  </footer>
 </body>
 
 </html>
@@ -116,6 +126,16 @@
 <style>
   .input{
     min-width:200px;
+  }
+  
+    .main {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  .section {
+    flex: 1;
   }
 </style>
 
@@ -128,5 +148,31 @@
       $notification.parentNode.removeChild($notification);
     });
   });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+
+// Get all "navbar-burger" elements
+const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+// Check if there are any navbar burgers
+if ($navbarBurgers.length > 0) {
+
+  // Add a click event on each of them
+  $navbarBurgers.forEach( el => {
+    el.addEventListener('click', () => {
+
+      // Get the target from the "data-target" attribute
+      const target = el.dataset.target;
+      const $target = document.getElementById(target);
+
+      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+      el.classList.toggle('is-active');
+      $target.classList.toggle('is-active');
+
+    });
+  });
+}
+
 });
 </script>

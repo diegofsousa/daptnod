@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +12,8 @@
 	<!-- Bulma Version 0.9.0-->
 	<link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
 	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-		integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="" />
 </head>
 
 <body class="main">
@@ -30,6 +33,12 @@
       {% if request.user.is_authenticated %}
       <div id="navbarMenu" class="navbar-menu">
 				<div class="navbar-end">
+          <div class="navbar-item">
+            Dark mode 
+            <span>
+              <input onchange="changeTheme(this)" type="checkbox" id="switch_1" class="switch_1">
+            </span>
+          </div>
           <a href="{% url 'notes:my_notes' %}" class="navbar-item">
             <strong>My notes</strong>            
           </a>
@@ -46,6 +55,12 @@
       {% else %}
 			<div id="navbarMenu" class="navbar-menu">
 				<div class="navbar-end">
+          <div class="navbar-item">
+            Dark mode 
+            <span>
+              <input onchange="changeTheme(this)" type="checkbox" id="switch_1" class="switch_1">
+            </span>
+          </div>
           <div class="navbar-item">
             <a href="{% url 'accounts:signup' %}" class="button is-primary">
               <strong>Sign up</strong>
@@ -123,56 +138,69 @@
 
 </html>
 
-<style>
-  .input{
-    min-width:200px;
-  }
-  
-    .main {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-  }
-
-  .section {
-    flex: 1;
-  }
-</style>
+<link rel="stylesheet" href="{% static 'css/custom.css' %}" />
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-  (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-    var $notification = $delete.parentNode;
+    (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+      var $notification = $delete.parentNode;
 
-    $delete.addEventListener('click', () => {
-      $notification.parentNode.removeChild($notification);
+      $delete.addEventListener('click', () => {
+        $notification.parentNode.removeChild($notification);
+      });
     });
   });
-});
 
-document.addEventListener('DOMContentLoaded', () => {
-
-// Get all "navbar-burger" elements
-const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-// Check if there are any navbar burgers
-if ($navbarBurgers.length > 0) {
-
-  // Add a click event on each of them
-  $navbarBurgers.forEach( el => {
-    el.addEventListener('click', () => {
-
-      // Get the target from the "data-target" attribute
-      const target = el.dataset.target;
-      const $target = document.getElementById(target);
-
-      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-      el.classList.toggle('is-active');
-      $target.classList.toggle('is-active');
-
-    });
+  document.addEventListener('DOMContentLoaded', () => {
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    if ($navbarBurgers.length > 0) {
+      $navbarBurgers.forEach( el => {
+        el.addEventListener('click', () => {
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+        });
+      });
+    }
   });
-}
 
-});
+  const currentTheme = localStorage.getItem("theme");
+  if (currentTheme == "dark") {
+    addDarkTheme();
+    document.getElementById("switch_1").checked = true;
+  }
+
+
+  function changeTheme(checkboxElem) {
+    if (checkboxElem.checked) {
+      addDarkTheme();
+      localStorage.setItem("theme", "dark");
+    } else {
+      removeDarkTheme();
+      localStorage.setItem("theme", "light");
+    }
+  }
+
+  function addDarkTheme(){
+    var cssId = 'myCss';
+    if (!document.getElementById(cssId)){
+      var head  = document.getElementsByTagName('head')[0];
+      var link  = document.createElement('link');
+      link.id   = cssId;
+      link.rel  = 'stylesheet';
+      link.type = 'text/css';
+      link.href = "{% static 'css/dark-theme-bulma.css' %}";
+      link.media = 'all';
+      head.appendChild(link);
+    }
+  }
+
+  function removeDarkTheme(){
+    var cssId = 'myCss';
+    var head  = document.getElementsByTagName('head')[0];
+    var linkNode = document.getElementById(cssId);
+    head.removeChild(linkNode)
+  }
+
 </script>

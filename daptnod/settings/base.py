@@ -12,26 +12,19 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
-# Thirty libs
-from decouple import config
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = 'pnco_dqz+wf=l-h(k3+oli=5=10g8p)=1i$66j$i&b)dir4w!s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-if config('DEBUG') == '0':
-    DEBUG = False
-
-ALLOWED_HOSTS = [config('HOST_ALLOWED0'), config('HOST_ALLOWED1'), config('HOST_ALLOWED2')]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -156,7 +149,7 @@ AUTHENTICATION_BACKENDS = (
     'daptnod.accounts.backends.ModelBackend'
 )
 
-HASHID_FIELD_SALT = config('SECRET_SALT_HASH')
+HASHID_FIELD_SALT = '^rmb8(et+qg&j5vec6e^aqvwsd%)&9hc7r-*c!62*y^ts(&(s_'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

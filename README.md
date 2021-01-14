@@ -7,7 +7,7 @@
 
 `daptnod` is a simple Django web application that creates quick notes that can be shared via a url. A more complete alternative to the popular dontpad.com. The implementation strives to be simple and free of unnecessary dependencies.
 
-![Example](/daptnod/docs/gif-daptnod.gif)
+![Example](/docs/gif-daptnod.gif)
 
 
 ## Goals

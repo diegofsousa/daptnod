@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views.generic import ListView
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from .models import Note
@@ -26,7 +28,6 @@ def index(request):
 		})
 
 def create_note(request):
-	# 1° caso é quando ele é anonimo
 	if request.user.is_authenticated == False:
 		note = Note()
 		note.save()
@@ -89,6 +90,7 @@ def handler_update_note_by_authenticated_user(request, note):
 		content = request.POST.get('content')
 	)
 
+@login_required
 def blocking_or_unblocking_note(request, hashid):
 	note = get_object_or_404(Note, id=hashid)
 
@@ -99,6 +101,7 @@ def blocking_or_unblocking_note(request, hashid):
 	messages.success(request, 'The content blocking settings have been successfully made!')
 	return redirect('notes:note', hashid=note.id.hashid)
 
+@login_required
 def private_or_public_note(request, hashid):
 	note = get_object_or_404(Note, id=hashid)
 
@@ -109,7 +112,7 @@ def private_or_public_note(request, hashid):
 	messages.success(request, 'Content privacy settings have been successfully made!')
 	return redirect('notes:note', hashid=note.id.hashid)
 
-class MyNotesList(ListView):
+class MyNotesList(LoginRequiredMixin, ListView):
 	model = Note
 	http_method_names = ['get']
 	template_name = 'list/my_notes.html'
@@ -145,7 +148,7 @@ class MyNotesList(ListView):
 
 		return context
 
-class RecentChangesList(ListView):
+class RecentChangesList(LoginRequiredMixin, ListView):
 	model = Note
 	http_method_names = ['get']
 	template_name = 'list/recent_changes.html'
@@ -181,6 +184,7 @@ class RecentChangesList(ListView):
 
 		return context
 
+@login_required
 def delete_note(request):
 	if request.method == 'POST':
 		hashid = request.POST.get("hashid", None)

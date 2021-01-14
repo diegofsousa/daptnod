@@ -2,11 +2,13 @@
 
 > A shared note maker
 
-<img alt="license" src=" https://img.shields.io/github/license/diegofsousa/daptnod">
 <img alt="languages" src="https://img.shields.io/github/languages/count/diegofsousa/daptnod">
 <img alt="last commit" src="https://img.shields.io/github/last-commit/diegofsousa/daptnod">
 
 `daptnod` is a simple Django web application that creates quick notes that can be shared via a url. A more complete alternative to the popular dontpad.com. The implementation strives to be simple and free of unnecessary dependencies.
+
+![Example](/docs/gif-daptnod.gif)
+
 
 ## Goals
 

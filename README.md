@@ -77,7 +77,7 @@
 
 ## Others
 
-This project was referenced in the following post: [https://diegofernando.dev/criando-uma-ferramenta-para-criacao-de-notas-rapidas.html](https://diegofernando.dev/criando-uma-ferramenta-para-criacao-de-notas-rapidas.html)
+This project was referenced in the following post in PT-BR: [https://diegofernando.dev/criando-uma-ferramenta-para-criacao-de-notas-rapidas.html](https://diegofernando.dev/criando-uma-ferramenta-para-criacao-de-notas-rapidas.html)
 
 ## License
 

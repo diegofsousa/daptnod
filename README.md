@@ -75,6 +75,10 @@
 - Review changes
 - Send pull request
 
+## Others
+
+This project was referenced in the following post in PT-BR: [https://diegofernando.dev/criando-uma-ferramenta-para-criacao-de-notas-rapidas.html](https://diegofernando.dev/criando-uma-ferramenta-para-criacao-de-notas-rapidas.html)
+
 ## License
 
 [MIT](LICENSE)

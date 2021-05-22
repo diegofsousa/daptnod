@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <div class="columns is-8 is-variable ">
+        <div class="column is-full">
+          <h1 class="title is-1"><i class="fa fa-envelope"></i></h1>
+          <p class="is-size-4">We have sent you a link to activate your account.</p>
+          <p class="is-size-6">Check your registered email inbox.</p>
+          {% if blocked_attempts == False %}
+            <p class="is-size-6">Try to resend the email in <span id="spanClock"></span> seconds.</p>
+            <p class="is-size-6" id="retry"><a href="{% url 'accounts:retry_sending_email' %}">Retry sending email</a></p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script language="javaScript">
+    document.getElementById('retry').style.display = "none"
+    var min, seg;		min = 0;		seg = 30		
+    function clock(){			
+        if((seg > 0)){				
+            if(seg == 0){					
+                document.getElementById('retry').style.display = "block"	
+            }				
+            else{					
+                seg = seg - 1;				
+            }				
+				
+            if(seg.toString().length == 1){					
+                seg = "0" + seg;				
+            }				
+            document.getElementById('spanClock').innerHTML = seg;				
+            setTimeout('relogio()', 1000);			
+        }			
+        else{
+            document.getElementById('retry').style.display = "block"								
+        }		
+    }
+    
+    clock()
+</script>
+{% endblock %}

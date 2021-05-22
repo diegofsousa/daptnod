@@ -145,8 +145,7 @@ LOGIN_URL = 'notes:index'
 LOGIN_REDIRECT_URL = 'core:index'
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'daptnod.accounts.backends.ModelBackend'
+    'daptnod.accounts.backends.ModelBackend',
 )
 
 HASHID_FIELD_SALT = '^rmb8(et+qg&j5vec6e^aqvwsd%)&9hc7r-*c!62*y^ts(&(s_'

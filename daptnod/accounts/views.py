@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as django_login
@@ -19,6 +19,7 @@ from django.contrib import messages
 from datetime import timedelta
 
 SECONDS_TO_TRY_AGAIN_ACTIVATION_EMAIL_REGISTER = 30
+TOTAL_SECONDS_TO_ACTIVATION_CODE = 60 * 5
 DAYS_TO_UNLOCK_EMAIL_ACTIVATION = 10
 NUMBER_OF_ACTIVATION_ATTEMPTS_ALLOWED_WITHIN_THE_TIME_LIMIT = 3
 
@@ -161,8 +162,21 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
 		return self.request.user
 
 	def form_valid(self, form):
+		disable_user = False
+		first_email = User.objects.get(pk=self.request.user.pk).email
+
+		if first_email != form.cleaned_data['email']:
+			## send email to first email
+			disable_user = True
 		form.save()
-		messages.success(self.request, 'Updated user registration.')
+
+		if disable_user == True:
+			self.request.user.is_active = False
+			self.request.user.save()
+			messages.warning(self.request, 'Updated user information. You must Login again to activate the new email.')
+			logout(self.request)
+		else:
+			messages.success(self.request, 'Updated user registration.')
 		return HttpResponseRedirect(self.get_success_url())
 
 	def form_invalid(self, form):
@@ -190,3 +204,22 @@ class UpdatePasswordView(LoginRequiredMixin, FormView):
 		form.save()
 		messages.success(self.request, 'Updated password. Enter your new credentials to sign in.')
 		return super(UpdatePasswordView, self).form_valid(form)
+
+def activation_account(request, hashlink):
+	activation_hash = get_object_or_404(ActivationHash, hash_for_link_activation=hashlink)
+	if (timezone.now() - activation_hash.created_at).total_seconds() <= TOTAL_SECONDS_TO_ACTIVATION_CODE and activation_hash.activated_at == None:
+		activation_hash.created_by.is_active = True
+		activation_hash.created_by.save()
+
+		activation_hash.activated_at = timezone.now()
+		activation_hash.save()
+
+		ActivationHash.objects.filter(
+			created_by__pk = activation_hash.created_by.pk,
+			activated_at = None
+		).delete()
+
+		messages.success(request, 'User activated successfully! To proceed, login with username and password.')
+		return redirect('notes:index')
+	
+	raise Http404

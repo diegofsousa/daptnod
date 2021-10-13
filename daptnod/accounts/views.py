@@ -12,6 +12,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.utils import timezone
+from daptnod.commons.email import handler as email_handler
 from .forms import UserCreationForm, UpdateUserForm
 from .models import ActivationHash
 from django.urls import reverse_lazy, reverse
@@ -49,7 +50,7 @@ def login(request):
 				activation_hash.created_by = user
 				activation_hash.save()
 
-				# TODO: send email here
+				email_handler.email_verification(user.username, user.email, activation_hash.hash_for_link_activation)
 
 				return redirect('accounts:offer_retry_sending_email')
 
@@ -76,7 +77,7 @@ class RegisterView(SuccessMessageMixin, CreateView):
 		activation_hash.created_by = user
 		activation_hash.save()
 
-		# TODO: send email here
+		email_handler.email_verification(user.username, user.email, activation_hash.hash_for_link_activation)
 
 		self.request.session['blocked_attempts'] = False
 		self.request.session['email_user'] = user.email
@@ -88,9 +89,6 @@ def offer_retry_sending_email(request):
 
 	if email_user != None and email_user != "":
 		blocked_attempts = request.session.get('blocked_attempts', False)
-
-		print(blocked_attempts)
-
 		return render(request, 'retry_send_email_activation.html', {
 			"email_user":email_user,
 			"blocked_attempts":blocked_attempts
@@ -120,7 +118,7 @@ def retry_sending_email(request):
 						messages.warning(request, 'This is your last chance. You have been blocked for {} days from sending email on account activation.'.format(DAYS_TO_UNLOCK_EMAIL_ACTIVATION))
 						request.session['blocked_attempts'] = True
 
-					# TODO: send email here
+					email_handler.email_verification(activation_hash.created_by.username, email_user, activation_hash.hash_for_link_activation)
 
 					messages.info(request, 'A new activation link was sent to the registered email.')
 					request.session['email_user'] = email_user
@@ -163,10 +161,11 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
 
 	def form_valid(self, form):
 		disable_user = False
+		username = User.objects.get(pk=self.request.user.pk).username
 		first_email = User.objects.get(pk=self.request.user.pk).email
 
 		if first_email != form.cleaned_data['email']:
-			## send email to first email
+			email_handler.email_changed_notification(username, first_email, form.cleaned_data['email'])
 			disable_user = True
 		form.save()
 

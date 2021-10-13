@@ -1,0 +1,25 @@
+
+{% load i18n %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      {% block head_title %}{% endblock head_title %}
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    {% block head %} {% endblock head %}
+  </head>
+  <body>
+    <div id="pad-wrapper">
+        <div class="row">
+          <div class="content-wrap col-md-offset-1 col-md-10">
+            {% block content %}{% endblock content %}
+          </div>
+        </div>
+    </div>
+  </body>
+</html>

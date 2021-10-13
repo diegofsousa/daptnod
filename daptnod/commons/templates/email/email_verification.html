@@ -1,0 +1,33 @@
+{% extends "email/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}We can activate your account now, {{ name }}?{% endblock %}
+
+{% block content %}
+  <div>
+    <h3>Just one more step, {{ name }}... :D</h3>
+
+    {% url 'account_email' as email_url %}
+    <p>Hello {{ name }}, how are you?</p>
+
+    <a target="_blank" href="{{ path_link }}{{ link }}">
+        Activate your registration now!
+    </a>
+
+    <p>
+        If the link above doesn't work, copy and paste the excerpt below into your browser:
+        <br>
+        <a target="_blank" href="{{ path_link }}{{ link }}">
+          {{ path_link }}{{ link }}
+        </a>    
+    </p>
+
+    <br>
+
+    <p>
+        Sincerely, Daptnod Team.
+    </p>
+
+  </div>
+{% endblock %}

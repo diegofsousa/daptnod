@@ -146,8 +146,7 @@ LOGIN_URL = 'notes:index'
 LOGIN_REDIRECT_URL = 'core:index'
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'daptnod.accounts.backends.ModelBackend'
+    'daptnod.accounts.backends.ModelBackend',
 )
 
 HASHID_FIELD_SALT = '^rmb8(et+qg&j5vec6e^aqvwsd%)&9hc7r-*c!62*y^ts(&(s_'
@@ -158,3 +157,10 @@ HASHID_FIELD_SALT = '^rmb8(et+qg&j5vec6e^aqvwsd%)&9hc7r-*c!62*y^ts(&(s_'
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Main settings from '.env' file
+MAIN_HOST = "http://localhost:8000/"
+PATH_VALIDATE_REGISTER = "accounts/signup/activation/code/"
+
+# Paths for frontend
+LINK_VALIDATE_REGISTER = MAIN_HOST + PATH_VALIDATE_REGISTER

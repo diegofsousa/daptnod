@@ -1,0 +1,34 @@
+{% extends "email/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}Hi, {{ name }}?{% endblock %}
+
+{% block content %}
+  <div>
+    {% url 'account_email' as email_url %}
+    <p>We notify you that a new email has been linked to your account.</p>
+    <p>For security reasons, the account is suspended and in order to be able to use it, we ask you to login to the platform and confirm the email by our verification.</p>
+
+    <p>New email: {{ new_email }}</p>
+
+    <a target="_blank" href="{{ site_link }}">
+        Login!
+    </a>
+
+    <p>
+        If the link above doesn't work, copy and paste the excerpt below into your browser:
+        <br>
+        <a target="_blank" href="{{ site_link }}">
+            {{ site_link }}
+        </a>    
+    </p>
+
+    <br>
+
+    <p>
+        Sincerely, Daptnod Team.
+    </p>
+
+  </div>
+{% endblock %}
